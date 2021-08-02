@@ -1,10 +1,8 @@
 package org.apache.solr.handler.dataimport;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.io.IOException;
 import java.io.Reader;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -36,14 +34,16 @@ public class SimpleJSONEntityProcessor extends EntityProcessorBase {
         if (url == null) {
             throw new DataImportHandlerException(DataImportHandlerException.SEVERE, "'" + URL + "' is a required attribute");
         }
-
         reader = new BufferedReader((Reader) context.getDataSource().getData(url));
-
-        Gson gson = new Gson();
-        Type type = new TypeToken<List<Map<String, Object>>>(){}.getType();
-        result = gson.fromJson(reader, type);
-
-        rowIterator = result.listIterator();
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map response = objectMapper.readValue(reader, Map.class);
+            System.out.println("=response======"+response);
+            result = (List)response.get("docs");
+            rowIterator = result.listIterator();
+        } catch (IOException e) {
+            System.out.println("===exception===="+e);
+        }
     }
 
     @Override
@@ -64,3 +64,4 @@ public class SimpleJSONEntityProcessor extends EntityProcessorBase {
         super.destroy();
     }
 }
+
