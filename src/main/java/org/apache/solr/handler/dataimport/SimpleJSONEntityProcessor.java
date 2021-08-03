@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -16,7 +17,7 @@ public class SimpleJSONEntityProcessor extends EntityProcessorBase {
     private String url;
     private ListIterator<Map<String, Object>> rowIterator;
     private List<Map<String, Object>> result;
-
+    protected List<String> placeHolderVariables;
     public static final String URL = "url";
 
     public SimpleJSONEntityProcessor() {
@@ -48,20 +49,21 @@ public class SimpleJSONEntityProcessor extends EntityProcessorBase {
 
     @Override
     public Map<String, Object> nextRow() {
+
         if (!rowIterator.hasNext()) {
             return null;
         }
         return rowIterator.next();
     }
 
-    @Override
-    public void destroy() {
-        try {
-            reader.close();
-        } catch (Exception e) {
-            // do nothing
-        }
-        super.destroy();
-    }
-}
+        @Override
+            public void destroy () {
+                try {
+                    reader.close();
+                } catch (Exception e) {
+                    // do nothing
+                }
+                super.destroy();
+            }
 
+    }
